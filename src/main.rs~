@@ -1,0 +1,23 @@
+use esp_idf_sys as _;
+use esp32_nimble::{BLEDevice, utilities::mutex::Mutex};
+
+fn main() {
+        esp_idf_sys::link_patches(); 
+
+        println!("Starting BLE server...");
+
+        let ble_device = BLEDevice::take();
+        ble_device.security().set_auth(true, true, true);
+
+        let server = ble_device.get_server();
+
+        server.on_connect(|_, _| println!("Client connected"));
+        server.on_disconnect(|_, _| println!("Client disconnected"));
+
+        let service = server.create_service("180F");
+        let characteristic = service.lock().create_characteristic("2A19", 0x10);
+        characteristic.lock().set_value(b"42");
+
+        service.lock().start();
+        ble_device.get_advertising().start();
+}

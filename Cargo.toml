@@ -1,0 +1,42 @@
+[package]
+name = "esp-ble"
+version = "0.1.0"
+authors = ["kas"]
+edition = "2021"
+resolver = "2"
+rust-version = "1.77"
+
+[[bin]]
+name = "esp-ble"
+harness = false # do not use the built in cargo test harness -> resolve rust-analyzer errors
+
+[profile.release]
+opt-level = "s"
+lto = true
+
+[profile.dev]
+debug = true    # Symbols are nice and they don't increase the size on Flash
+opt-level = "z"
+
+[features]
+default = []
+
+[dependencies]
+esp32-nimble = "0.11.1"
+anyhow = "1"
+log = { version = "0.4", default-features = false }
+heapless = "0.8"
+uuid = { version = "1", features = ["v4"] }
+esp-idf-sys = { version = "0.36", features = ["binstart"] }
+rand = "0.8"
+once_cell = "1.21.3"
+esp-idf-svc = "0.51.0"
+zerocopy = "0.8.26"
+embedded-svc = "0.28.1"
+
+[build-dependencies]
+embuild = { version = "0.31", features = ["espidf"] }
+
+[dependencies.esp-idf-hal]
+version = "0.45.2"
+features = ["experimental"]
